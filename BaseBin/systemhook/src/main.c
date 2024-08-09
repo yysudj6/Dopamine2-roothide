@@ -692,7 +692,7 @@ int __sysctlbyname_hook(const char *name, size_t namelen, void *oldp, size_t *ol
 	if(name && strncmp(name, "security.mac.amfi.developer_mode_status", namelen)==0) {
 		return 1;
 	}
-	return syscall__sysctlbyname(name,name,oldp,oldlenp,newp,newlen);
+	return syscall__sysctlbyname(name,namelen,oldp,oldlenp,newp,newlen);
 }
 
 #include <sys/sysctl.h>
