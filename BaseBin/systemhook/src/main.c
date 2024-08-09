@@ -690,7 +690,11 @@ int __sysctlbyname(const char *name, size_t namelen, void *oldp, size_t *oldlenp
 int __sysctlbyname_hook(const char *name, size_t namelen, void *oldp, size_t *oldlenp, void *newp, size_t newlen)
 {
 	if(name && strncmp(name, "security.mac.amfi.developer_mode_status", namelen)==0) {
-		return 1;
+		if(oldp && oldlenp && *oldlenp>=sizeof(int)) {
+			*(int*)oldp = 1;
+			*oldlenp = sizeof(int);
+			return 0;
+		}
 	}
 	return syscall__sysctlbyname(name,namelen,oldp,oldlenp,newp,newlen);
 }
@@ -718,7 +722,7 @@ int __sysctl_hook(int *name, u_int namelen, void *oldp, size_t *oldlenp, const v
 	}
 	if(name && namelen && cached_namelen &&
 	 namelen==cached_namelen && memcmp(cached_name, name, namelen)==0) {
-		if(oldp && oldlenp) {
+		if(oldp && oldlenp && *oldlenp>=sizeof(int)) {
 			*(int*)oldp = 1;
 			*oldlenp = sizeof(int);
 			return 0;
